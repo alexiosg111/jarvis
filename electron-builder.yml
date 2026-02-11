@@ -1,22 +1,19 @@
-appId: "com.jarvis.hub"
-productName: "Jarvis Hub"
+appId: com.jarvishub.app
+productName: jarvis-hub
 directories:
-  output: "release"
-  buildResources: "resources"
+  output: release
 files:
-  - "dist/**"
-  - "package.json"
+  - dist/**/*
+  - package.json
 mac:
+  category: public.app-category.productivity
   target:
-    - "dmg"
-  icon: "resources/icon.icns"
-  category: "public.app-category.productivity"
+    - target: dmg
+      arch:
+        - x64
+        - arm64
 win:
   target:
-    - "nsis"
-  icon: "resources/icon.ico"
-  artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
-linux:
-  target:
-    - "AppImage"
-  icon: "resources/icon.png"
+    - target: nsis
+      arch:
+        - x64

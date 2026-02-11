@@ -1,167 +1,87 @@
-export type ProviderId = "kimi" | "zai" | "comet";
+export interface AgentConfig {
+  name: string;
+  url: string;
+  requiresQuery: boolean;
+}
 
-export interface ProviderConfig {
-  id: ProviderId;
-  label: string;
-  baseUrl: string;
-  queryParam: string;
-  appName?: string;
+export interface Task {
+  id: string;
   description: string;
+  timestamp: number;
 }
 
-export interface OpenProviderRequest {
-  providerId: ProviderId;
-  prompt: string;
+export interface Plan {
+  id: string;
+  taskId: string;
+  content: string;
+  agent: string;
+  timestamp: number;
 }
 
-export interface OpenProviderResponse {
-  ok: boolean;
-  error?: string;
-  url?: string;
-}
-
-export interface SaveStateResponse {
-  ok: boolean;
-  error?: string;
-}
-
-export interface LoadStateResponse {
-  ok: boolean;
-  error?: string;
-  state?: PersistedState;
-}
-
-export interface ExportPlanResponse {
-  ok: boolean;
-  error?: string;
-  path?: string;
-}
-
-export const MAX_URL_LENGTH = 1900;
-
-export const PROVIDERS: Record<ProviderId, ProviderConfig> = {
-  kimi: {
-    id: "kimi",
-    label: "Kimi",
-    baseUrl: "https://kimi.moonshot.cn/",
-    queryParam: "prompt",
-    description: "Moonshot Kimi chat"
-  },
-  zai: {
-    id: "zai",
-    label: "Z.ai",
-    baseUrl: "https://chat.z.ai/",
-    queryParam: "q",
-    description: "Z.ai chat"
-  },
-  comet: {
-    id: "comet",
-    label: "Comet",
-    baseUrl: "https://www.perplexity.ai/",
-    queryParam: "q",
-    description: "Perplexity Comet browser",
-    appName: "Comet"
-  }
-};
-
-export const AGENT_ROLES = [
+export const AGENTS: AgentConfig[] = [
   {
-    name: "Planner",
-    focus: "Decompose the task into phases, dependencies, and success criteria."
+    name: 'Kimi',
+    url: 'https://kimi.moonshot.cn',
+    requiresQuery: true,
   },
   {
-    name: "Risk Analyst",
-    focus: "Surface assumptions, risks, and open questions that need validation."
+    name: 'z.ai',
+    url: 'https://z.ai',
+    requiresQuery: true,
   },
   {
-    name: "Builder",
-    focus: "Propose concrete execution steps, tools, and artifacts."
+    name: 'Comet',
+    url: 'https://comet.openeuler.org',
+    requiresQuery: true,
   },
-  {
-    name: "Synthesizer",
-    focus: "Merge the best ideas into a concise, prioritized plan."
-  }
 ];
 
-export interface PromptInputs {
-  task: string;
-  context: string;
-  constraints: string;
-  successCriteria: string;
-  timeline: string;
-  resources: string;
+const MAX_URL_LENGTH = 2000;
+
+export function buildPromptUrl(
+  agent: string,
+  task: string,
+  plan: string
+): string {
+  const agentConfig = AGENTS.find((a) => a.name === agent);
+  if (!agentConfig) {
+    throw new Error(`Unknown agent: ${agent}`);
+  }
+
+  const prompt = `Task: ${task}\n\nPlan: ${plan}`;
+  const encodedPrompt = encodeURIComponent(prompt);
+
+  if (encodedPrompt.length > MAX_URL_LENGTH) {
+    throw new Error('Prompt is too long to send via URL. Please shorten your task or plan.');
+  }
+
+  if (!agentConfig.requiresQuery) {
+    return agentConfig.url;
+  }
+
+  return `${agentConfig.url}?prompt=${encodedPrompt}`;
 }
 
-export interface PromptDraft extends PromptInputs {
-  finalPlan: string;
+export function formatPlanForExport(plan: Plan, task: Task): string {
+  return `Task: ${task.description}\n\nPlan (from ${plan.agent}):\n${plan.content}\n\nGenerated: ${new Date(plan.timestamp).toISOString()}`;
 }
 
-export const DEFAULT_DRAFT: PromptDraft = {
-  task: "",
-  context: "",
-  constraints: "",
-  successCriteria: "",
-  timeline: "",
-  resources: "",
-  finalPlan: ""
-};
-
-export interface PromptHistoryItem {
-  id: string;
-  createdAt: string;
-  label: string;
-  draft: PromptDraft;
+export function validateTaskInput(description: string): { valid: boolean; error?: string } {
+  if (!description || description.trim().length === 0) {
+    return { valid: false, error: 'Task description is required' };
+  }
+  if (description.length > 10000) {
+    return { valid: false, error: 'Task description is too long (max 10000 characters)' };
+  }
+  return { valid: true };
 }
 
-export interface PersistedState {
-  version: number;
-  draft: PromptDraft;
-  history: PromptHistoryItem[];
+export function validatePlanInput(content: string): { valid: boolean; error?: string } {
+  if (!content || content.trim().length === 0) {
+    return { valid: false, error: 'Plan content is required' };
+  }
+  if (content.length > 50000) {
+    return { valid: false, error: 'Plan content is too long (max 50000 characters)' };
+  }
+  return { valid: true };
 }
-
-export const DEFAULT_STATE: PersistedState = {
-  version: 1,
-  draft: DEFAULT_DRAFT,
-  history: []
-};
-
-const formatSection = (label: string, value: string) =>
-  value.trim() ? `### ${label}\n${value.trim()}\n` : "";
-
-export const buildMultiAgentPrompt = (inputs: PromptInputs) => {
-  const roleLines = AGENT_ROLES.map(
-    (role, index) => `${index + 1}. ${role.name}: ${role.focus}`
-  ).join("\n");
-
-  return [
-    "You are Jarvis Hub, orchestrating a multi-agent planning flow.",
-    "Coordinate the following roles and synthesize a final plan:",
-    roleLines,
-    "",
-    "Use the context below:",
-    formatSection("Task", inputs.task),
-    formatSection("Context", inputs.context),
-    formatSection("Constraints", inputs.constraints),
-    formatSection("Success Criteria", inputs.successCriteria),
-    formatSection("Timeline", inputs.timeline),
-    formatSection("Resources", inputs.resources),
-    "",
-    "Output a concise plan with headings:",
-    "- Overview",
-    "- Milestones",
-    "- Risks & Mitigations",
-    "- Immediate Next Actions",
-    "- Open Questions",
-    "",
-    "Be decisive, actionable, and prioritize clarity."
-  ]
-    .filter(Boolean)
-    .join("\n");
-};
-
-export const buildProviderUrl = (providerId: ProviderId, prompt: string) => {
-  const provider = PROVIDERS[providerId];
-  const url = new URL(provider.baseUrl);
-  url.searchParams.set(provider.queryParam, prompt);
-  return url.toString();
-};

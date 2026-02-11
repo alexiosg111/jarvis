@@ -1,33 +1,40 @@
 {
   "name": "jarvis-hub",
   "version": "0.1.0",
-  "description": "Jarvis Hub Electron app for multi-agent planning.",
+  "description": "Multi-agent planning flow with Electron orchestrator",
   "main": "dist/main/main.js",
-  "private": true,
-  "author": "",
+  "author": "jarvis-hub",
+  "license": "MIT",
   "scripts": {
-    "dev": "concurrently -k \"tsc -p tsconfig.main.json --watch\" \"vite --config vite.renderer.config.ts\" \"wait-on dist/main/main.js http://localhost:5173 && electron .\"",
+    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:renderer": "vite --config vite.renderer.config.ts",
+    "dev:main": "tsc -p tsconfig.main.json && electron .",
     "build": "npm run build:renderer && npm run build:main",
     "build:renderer": "vite build --config vite.renderer.config.ts",
     "build:main": "tsc -p tsconfig.main.json",
-    "dist": "npm run build && electron-builder",
     "dist:mac": "npm run build && electron-builder --mac",
-    "dist:win": "npm run build && electron-builder --win"
+    "dist:win": "npm run build && electron-builder --win",
+    "lint": "eslint src --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
-    "@types/react": "^18.2.64",
-    "@types/react-dom": "^18.2.21",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.1",
+    "@typescript-eslint/parser": "^7.1.1",
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
-    "electron": "^29.1.5",
+    "electron": "^29.1.4",
     "electron-builder": "^24.13.3",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.8",
-    "wait-on": "^7.2.0"
-  }
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "typescript": "^5.4.2",
+    "vite": "^5.1.5"
+  },
 }
