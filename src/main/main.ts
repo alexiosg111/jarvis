@@ -1,195 +1,123 @@
-import { app, BrowserWindow, dialog, ipcMain } from "electron";
-import path from "path";
-import fs from "fs/promises";
-import crypto from "crypto";
-import {
-  DEFAULT_STATE,
-  ExportPlanResponse,
-  LoadStateResponse,
-  OpenProviderRequest,
-  OpenProviderResponse,
-  PersistedState,
-  PromptDraft,
-  PromptHistoryItem,
-  SaveStateResponse
-} from "../shared/config";
-import { isDev } from "./isDev";
-import { openPromptInProvider } from "./orchestrator";
-
-const getStatePath = () => path.join(app.getPath("userData"), "jarvis-hub.json");
-
-const coerceString = (value: unknown) => (typeof value === "string" ? value : "");
-
-const toDraft = (value: unknown): PromptDraft => ({
-  task: coerceString((value as PromptDraft | undefined)?.task),
-  context: coerceString((value as PromptDraft | undefined)?.context),
-  constraints: coerceString((value as PromptDraft | undefined)?.constraints),
-  successCriteria: coerceString((value as PromptDraft | undefined)?.successCriteria),
-  timeline: coerceString((value as PromptDraft | undefined)?.timeline),
-  resources: coerceString((value as PromptDraft | undefined)?.resources),
-  finalPlan: coerceString((value as PromptDraft | undefined)?.finalPlan)
-});
-
-const toHistoryItem = (value: unknown): PromptHistoryItem | null => {
-  if (!value || typeof value !== "object") {
-    return null;
-  }
-
-  const raw = value as PromptHistoryItem;
-  const label = coerceString(raw.label);
-  const createdAt = coerceString(raw.createdAt);
-
-  if (!label || !createdAt) {
-    return null;
-  }
-
-  return {
-    id: coerceString(raw.id) || crypto.randomUUID(),
-    label,
-    createdAt,
-    draft: toDraft(raw.draft)
-  };
-};
-
-const sanitizeState = (value: unknown): PersistedState => {
-  if (!value || typeof value !== "object") {
-    return DEFAULT_STATE;
-  }
-
-  const raw = value as PersistedState;
-  const history = Array.isArray(raw.history)
-    ? raw.history
-        .map(toHistoryItem)
-        .filter((item): item is PromptHistoryItem => item !== null)
-    : [];
-
-  return {
-    version: typeof raw.version === "number" ? raw.version : DEFAULT_STATE.version,
-    draft: toDraft(raw.draft),
-    history
-  };
-};
-
-const readState = async (): Promise<PersistedState> => {
-  try {
-    const content = await fs.readFile(getStatePath(), "utf-8");
-    return sanitizeState(JSON.parse(content));
-  } catch (error) {
-    return DEFAULT_STATE;
-  }
-};
-
-const writeState = async (state: PersistedState) => {
-  await fs.writeFile(getStatePath(), JSON.stringify(state, null, 2));
-};
+import { app, BrowserWindow, ipcMain } from 'electron';
+import path from 'path';
+import { isDev } from './isDev';
+import { openAgentBrowser } from './orchestrator';
+import { validateTaskInput, validatePlanInput } from '../shared/config';
+import fs from 'fs/promises';
 
 let mainWindow: BrowserWindow | null = null;
 
-const createWindow = () => {
+function createWindow(): void {
   mainWindow = new BrowserWindow({
-    width: 1240,
-    height: 840,
-    minWidth: 960,
-    minHeight: 640,
-    show: false,
+    width: 1200,
+    height: 800,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
-      nodeIntegration: false
-    }
+      nodeIntegration: false,
+      sandbox: false,
+    },
+    titleBarStyle: 'default',
   });
-
-  mainWindow.once("ready-to-show", () => {
-    mainWindow?.show();
-  });
-
-  mainWindow.on("closed", () => {
-    mainWindow = null;
-  });
-
-  mainWindow.webContents.setWindowOpenHandler(() => ({ action: "deny" }));
 
   if (isDev()) {
-    const devServerUrl = process.env.VITE_DEV_SERVER_URL ?? "http://localhost:5173";
-    mainWindow.loadURL(devServerUrl);
+    mainWindow.loadURL('http://localhost:5173');
+    mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, "../renderer/index.html"));
+    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
 
-  return mainWindow;
-};
-
-app.whenReady().then(() => {
-  createWindow();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
+  mainWindow.on('closed', () => {
+    mainWindow = null;
   });
-});
+}
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('ready', createWindow);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-ipcMain.handle(
-  "open-provider",
-  async (_event, payload: OpenProviderRequest): Promise<OpenProviderResponse> => {
-    if (!payload || typeof payload !== "object") {
-      return { ok: false, error: "Invalid request." };
-    }
-
-    if (typeof payload.prompt !== "string" || typeof payload.providerId !== "string") {
-      return { ok: false, error: "Invalid request payload." };
-    }
-
-    return openPromptInProvider(payload.providerId, payload.prompt);
-  }
-);
-
-ipcMain.handle("load-state", async (): Promise<LoadStateResponse> => {
-  try {
-    const state = await readState();
-    return { ok: true, state };
-  } catch (error) {
-    return { ok: false, error: "Failed to load saved state." };
+app.on('activate', () => {
+  if (mainWindow === null) {
+    createWindow();
   }
 });
 
-ipcMain.handle(
-  "save-state",
-  async (_event, payload: PersistedState): Promise<SaveStateResponse> => {
+// IPC handlers with input validation
+ipcMain.handle('open-agent-browser', async (_event, agent: string, task: string, plan: string) => {
+  // Validate inputs
+  const taskValidation = validateTaskInput(task);
+  if (!taskValidation.valid) {
+    return { success: false, error: taskValidation.error };
+  }
+
+  const planValidation = validatePlanInput(plan);
+  if (!planValidation.valid) {
+    return { success: false, error: planValidation.error };
+  }
+
+  // Validate agent
+  const validAgents = ['Kimi', 'z.ai', 'Comet'];
+  if (!validAgents.includes(agent)) {
+    return { success: false, error: `Invalid agent: ${agent}` };
+  }
+
+  return await openAgentBrowser(agent, task, plan);
+});
+
+ipcMain.handle('get-user-data-path', async () => {
+  return app.getPath('userData');
+});
+
+ipcMain.handle('read-user-data', async () => {
+  try {
+    const userDataPath = app.getPath('userData');
+    const dataPath = path.join(userDataPath, 'data.json');
+
+    const data = await fs.readFile(dataPath, 'utf-8');
+    return JSON.parse(data);
+  } catch (err) {
+    // File doesn't exist yet, return null
+    if ((err as any)?.code === 'ENOENT') {
+      return null;
+    }
+    throw err;
+  }
+});
+
+ipcMain.handle('write-user-data', async (_event, data: { tasks?: any[]; plans?: any[]; history?: any[] }) => {
+  try {
+    const userDataPath = app.getPath('userData');
+    await fs.mkdir(userDataPath, { recursive: true });
+    const dataPath = path.join(userDataPath, 'data.json');
+
+    let existingData: { tasks: any[]; plans: any[]; history: any[] } = { tasks: [], plans: [], history: [] };
+
     try {
-      const sanitized = sanitizeState(payload);
-      await writeState(sanitized);
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, error: "Failed to save state." };
+      const existing = await fs.readFile(dataPath, 'utf-8');
+      existingData = JSON.parse(existing);
+    } catch (err) {
+      // File doesn't exist, use empty data
     }
+
+    if (data.tasks !== undefined) {
+      existingData.tasks = data.tasks;
+    }
+    if (data.plans !== undefined) {
+      existingData.plans = data.plans;
+    }
+    if (data.history !== undefined) {
+      existingData.history = data.history;
+    }
+
+    await fs.writeFile(dataPath, JSON.stringify(existingData, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to write user data:', err);
+    throw err;
   }
-);
-
-ipcMain.handle(
-  "export-plan",
-  async (_event, content: string): Promise<ExportPlanResponse> => {
-    if (typeof content !== "string" || !content.trim()) {
-      return { ok: false, error: "There is no plan content to export." };
-    }
-
-    const result = await dialog.showSaveDialog({
-      title: "Export plan",
-      defaultPath: "jarvis-plan.md",
-      filters: [{ name: "Markdown", extensions: ["md"] }]
-    });
-
-    if (result.canceled || !result.filePath) {
-      return { ok: false, error: "Export cancelled." };
-    }
-
-    await fs.writeFile(result.filePath, content, "utf-8");
-    return { ok: true, path: result.filePath };
-  }
-);
+});

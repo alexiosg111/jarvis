@@ -3,35 +3,57 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - 'v*.*.*'
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  release:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [macos-latest, windows-latest]
         include:
           - os: macos-latest
-            target: mac
+            platform: mac
           - os: windows-latest
-            target: win
+            platform: windows
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: npm
+          node-version: '20'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build app
+      - name: Build and package
         run: npm run build
-
-      - name: Package release
-        run: npx electron-builder --${{ matrix.target }} --publish always
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI: true
+
+      - name: Build ${{ matrix.platform }} distributables
+        run: |
+          if [ "${{ matrix.platform }}" = "mac" ]; then
+            npm run dist:mac
+          else
+            npm run dist:win
+          fi
+        shell: bash
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            release/*.dmg
+            release/*.exe
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,402 +1,339 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
-import {
-  AGENT_ROLES,
-  buildMultiAgentPrompt,
-  DEFAULT_DRAFT,
-  DEFAULT_STATE,
-  MAX_URL_LENGTH,
-  PersistedState,
-  PromptDraft,
-  PromptHistoryItem,
-  ProviderId,
-  PROVIDERS
-} from "../shared/config";
+import React, { useState, useEffect } from 'react';
+import { AGENTS, Task, Plan, formatPlanForExport } from '../shared/config';
 
-type Toast = {
+declare global {
+  interface Window {
+    electronAPI: {
+      openAgentBrowser: (agent: string, task: string, plan: string) => Promise<{ success: boolean; error?: string }>;
+      getUserDataPath: () => Promise<string>;
+      readUserData: () => Promise<{ tasks: Task[]; plans: Plan[]; history: any[] } | null>;
+      writeUserData: (data: { tasks?: Task[]; plans?: Plan[]; history?: any[] }) => Promise<void>;
+    };
+  }
+}
+
+interface Toast {
+  id: string;
   message: string;
-  tone?: "error" | "success";
-};
+  type: 'success' | 'error';
+}
 
-const HISTORY_LIMIT = 20;
+function App() {
+  const [taskInput, setTaskInput] = useState('');
+  const [currentTask, setCurrentTask] = useState<Task | null>(null);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [history, setHistory] = useState<Task[]>([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-const App = () => {
-  const [draft, setDraft] = useState<PromptDraft>(DEFAULT_DRAFT);
-  const [history, setHistory] = useState<PromptHistoryItem[]>([]);
-  const [toast, setToast] = useState<Toast | null>(null);
-  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
-  const [activeProvider, setActiveProvider] = useState<ProviderId>("kimi");
-  const hasLoaded = useRef(false);
-
-  const prompt = useMemo(
-    () =>
-      buildMultiAgentPrompt({
-        task: draft.task,
-        context: draft.context,
-        constraints: draft.constraints,
-        successCriteria: draft.successCriteria,
-        timeline: draft.timeline,
-        resources: draft.resources
-      }),
-    [draft]
-  );
-
-  const promptLength = prompt.length;
-
-  const showToast = useCallback((message: string, tone?: Toast["tone"]) => {
-    setToast({ message, tone });
+  // Load saved data on mount
+  useEffect(() => {
+    loadUserData();
   }, []);
 
+  // Autosave every 10 seconds
   useEffect(() => {
-    const timer = window.setTimeout(() => setToast(null), 3500);
-    return () => window.clearTimeout(timer);
-  }, [toast]);
+    const interval = setInterval(() => {
+      saveUserData();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [currentTask, plans, history]);
 
-  useEffect(() => {
-    const load = async () => {
-      if (!window.electronAPI) {
-        return;
+  const loadUserData = async () => {
+    try {
+      const data = await window.electronAPI.readUserData();
+      if (data) {
+        setHistory(data.tasks || []);
+        setPlans(data.plans || []);
+        if (data.tasks && data.tasks.length > 0) {
+          setCurrentTask(data.tasks[0]);
+          setTaskInput(data.tasks[0].description);
+        }
       }
-
-      const response = await window.electronAPI.loadState();
-      if (response.ok && response.state) {
-        setDraft(response.state.draft);
-        setHistory(response.state.history);
-      } else {
-        setDraft(DEFAULT_STATE.draft);
-      }
-
-      hasLoaded.current = true;
-    };
-
-    load();
-  }, []);
-
-  useEffect(() => {
-    if (!window.electronAPI || !hasLoaded.current) {
-      return;
+    } catch (err) {
+      showToast('Failed to load saved data', 'error');
     }
+  };
 
-    const timeout = window.setTimeout(async () => {
-      const state: PersistedState = {
-        version: 1,
-        draft,
-        history
-      };
-      const response = await window.electronAPI.saveState(state);
-      if (response.ok) {
-        setLastSavedAt(new Date().toLocaleTimeString());
-      } else if (response.error) {
-        showToast(response.error, "error");
-      }
-    }, 600);
-
-    return () => window.clearTimeout(timeout);
-  }, [draft, history, showToast]);
-
-  const updateField = (field: keyof PromptDraft) =>
-    (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const value = event.target.value;
-      setDraft((prev) => ({ ...prev, [field]: value }));
-    };
-
-  const handleOpenProvider = useCallback(
-    async (providerId: ProviderId) => {
-      setActiveProvider(providerId);
-
-      if (!draft.task.trim()) {
-        showToast("Add a primary task before launching.", "error");
-        return;
-      }
-
-      if (!window.electronAPI) {
-        showToast("Electron bridge not available.", "error");
-        return;
-      }
-
-      const response = await window.electronAPI.openProvider({
-        providerId,
-        prompt
+  const saveUserData = async () => {
+    try {
+      const tasks = currentTask ? [currentTask] : [];
+      await window.electronAPI.writeUserData({
+        tasks,
+        plans,
+        history,
       });
+    } catch (err) {
+      console.error('Failed to save user data:', err);
+    }
+  };
 
-      if (!response.ok) {
-        showToast(response.error ?? "Failed to open provider.", "error");
-        return;
-      }
+  const showToast = (message: string, type: 'success' | 'error') => {
+    const id = Date.now().toString();
+    setToasts((prev) => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 3000);
+  };
 
-      showToast(`Opened ${PROVIDERS[providerId].label}.`, "success");
-    },
-    [draft.task, prompt, showToast]
-  );
-
-  const handleCopy = useCallback(
-    async (text: string, label: string) => {
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast(`${label} copied to clipboard.`, "success");
-      } catch (error) {
-        showToast("Clipboard copy failed.", "error");
-      }
-    },
-    [showToast]
-  );
-
-  const handleExport = useCallback(async () => {
-    if (!draft.finalPlan.trim()) {
-      showToast("Add plan content before exporting.", "error");
+  const handleSetTask = () => {
+    if (!taskInput.trim()) {
+      showToast('Please enter a task description', 'error');
       return;
     }
 
-    if (!window.electronAPI) {
-      showToast("Electron bridge not available.", "error");
-      return;
-    }
-
-    const response = await window.electronAPI.exportPlan(draft.finalPlan);
-
-    if (!response.ok) {
-      showToast(response.error ?? "Export failed.", "error");
-      return;
-    }
-
-    showToast(`Plan exported to ${response.path}.`, "success");
-  }, [draft.finalPlan, showToast]);
-
-  const handleSaveHistory = useCallback(() => {
-    const trimmedTask = draft.task.trim();
-    const label = trimmedTask ? trimmedTask : "Untitled task";
-    const entry: PromptHistoryItem = {
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      label,
-      draft: { ...draft }
+    const newTask: Task = {
+      id: Date.now().toString(),
+      description: taskInput,
+      timestamp: Date.now(),
     };
 
-    setHistory((prev) => [entry, ...prev].slice(0, HISTORY_LIMIT));
-    showToast("Snapshot saved to history.", "success");
-  }, [draft, showToast]);
-
-  const handleLoadHistory = (entry: PromptHistoryItem) => {
-    setDraft(entry.draft);
-    showToast(`Loaded snapshot: ${entry.label}`, "success");
+    setCurrentTask(newTask);
+    setPlans([]);
+    setHistory((prev) => [newTask, ...prev]);
+    showToast('Task set successfully', 'success');
+    saveUserData();
   };
 
-  const handleDeleteHistory = (id: string) => {
-    setHistory((prev) => prev.filter((item) => item.id !== id));
+  const handleOpenAgent = async (agent: string, plan: Plan) => {
+    if (!currentTask) {
+      showToast('Please set a task first', 'error');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await window.electronAPI.openAgentBrowser(agent, currentTask.description, plan.content);
+      if (result.success) {
+        showToast(`Opening ${agent}...`, 'success');
+      } else {
+        showToast(result.error || 'Failed to open agent', 'error');
+      }
+    } catch (err) {
+      showToast('Failed to open agent browser', 'error');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleReset = () => {
-    setDraft(DEFAULT_DRAFT);
-    showToast("Draft cleared.", "success");
+  const handleCopyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Copied to clipboard', 'success');
+    } catch (err) {
+      showToast('Failed to copy to clipboard', 'error');
+    }
   };
 
+  const handleExportPlan = (plan: Plan) => {
+    if (!currentTask) return;
+
+    const exportText = formatPlanForExport(plan, currentTask);
+    handleCopyToClipboard(exportText);
+  };
+
+  const handleExportAll = () => {
+    if (!currentTask || plans.length === 0) {
+      showToast('No plans to export', 'error');
+      return;
+    }
+
+    const allPlans = plans
+      .map((plan) => formatPlanForExport(plan, currentTask!))
+      .join('\n\n' + '='.repeat(50) + '\n\n');
+
+    handleCopyToClipboard(allPlans);
+  };
+
+  const handleLoadFromHistory = (task: Task) => {
+    setCurrentTask(task);
+    setTaskInput(task.description);
+    // Load plans associated with this task
+    const taskPlans = plans.filter((p) => p.taskId === task.id);
+    setPlans(taskPlans);
+    showToast('Task loaded from history', 'success');
+  };
+
+  const handleClearTask = () => {
+    setCurrentTask(null);
+    setTaskInput('');
+    setPlans([]);
+    showToast('Task cleared', 'success');
+  };
+
+  // Keyboard shortcuts
   useEffect(() => {
-    const handler = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "Enter") {
-        event.preventDefault();
-        handleOpenProvider("kimi");
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl/Cmd + Enter: Set task
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleSetTask();
       }
-
-      if (event.ctrlKey && event.shiftKey && event.key === "Enter") {
-        event.preventDefault();
-        handleOpenProvider("zai");
+      // Ctrl/Cmd + E: Export all plans
+      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        handleExportAll();
       }
-
-      if (event.ctrlKey && event.altKey && event.key === "Enter") {
-        event.preventDefault();
-        handleOpenProvider("comet");
-      }
-
-      if (event.ctrlKey && event.key.toLowerCase() === "s") {
-        event.preventDefault();
-        handleSaveHistory();
+      // Ctrl/Cmd + N: Clear task
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        handleClearTask();
       }
     };
 
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [handleOpenProvider, handleSaveHistory]);
-
-  const providerButtons = Object.values(PROVIDERS);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [taskInput, currentTask, plans]);
 
   return (
-    <div className="app">
-      <header className="app__header">
-        <div>
-          <h1 className="app__title">Jarvis Hub</h1>
-          <p className="app__subtitle">
-            Multi-agent planning console for orchestrating Kimi, Z.ai, and Comet.
-          </p>
-        </div>
-        <div className="header__row">
-          <span className="tag">Active: {PROVIDERS[activeProvider].label}</span>
-          {lastSavedAt && <span className="tag">Autosaved {lastSavedAt}</span>}
-          <span className="tag">Prompt length: {promptLength} / {MAX_URL_LENGTH}</span>
-          {promptLength > MAX_URL_LENGTH && (
-            <span className="tag">Shorten prompt to avoid URL limits</span>
+    <div className="app-container">
+      <div className="header">
+        <h1>jarvis-hub</h1>
+        <p>Multi-agent planning flow with unified prompt configuration</p>
+      </div>
+
+      <div className="content">
+        <div className="left-panel">
+          <div className="task-section">
+            <h2 className="section-title">Task Description</h2>
+            <textarea
+              className="textarea task-input"
+              placeholder="Enter your task here..."
+              value={taskInput}
+              onChange={(e) => setTaskInput(e.target.value)}
+              disabled={!!currentTask}
+            />
+            <div className="button-group">
+              {!currentTask ? (
+                <>
+                  <button className="button" onClick={handleSetTask}>
+                    Set Task (Ctrl+Enter)
+                  </button>
+                  <button className="button button-secondary" onClick={handleLoadFromHistory.bind(null, history[0])} disabled={!history.length}>
+                    Load Last Task
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button className="button button-secondary" onClick={handleClearTask}>
+                    Clear Task (Ctrl+N)
+                  </button>
+                  <button className="button button-secondary" onClick={() => setTaskInput(currentTask.description)}>
+                    Edit Task
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {currentTask && (
+            <div className="plans-section">
+              <h2 className="section-title">Plans</h2>
+              <div className="plans-list">
+                {plans.length === 0 ? (
+                  <p style={{ color: '#666', fontStyle: 'italic' }}>No plans yet. Add plans manually to compare agent outputs.</p>
+                ) : (
+                  plans.map((plan) => (
+                    <div key={plan.id} className="plan-card">
+                      <div className="plan-header">
+                        <span className="plan-agent">{plan.agent}</span>
+                        <span className="plan-time">
+                          {new Date(plan.timestamp).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="plan-content">{plan.content}</div>
+                      <div className="plan-actions">
+                        <button
+                          className="button button-small"
+                          onClick={() => handleOpenAgent(plan.agent, plan)}
+                          disabled={isLoading}
+                        >
+                          Open in {plan.agent}
+                        </button>
+                        <button
+                          className="button button-small button-secondary"
+                          onClick={() => handleCopyToClipboard(plan.content)}
+                        >
+                          Copy
+                        </button>
+                        <button
+                          className="button button-small button-secondary"
+                          onClick={() => handleExportPlan(plan)}
+                        >
+                          Export
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+              {plans.length > 0 && (
+                <button className="button button-secondary" onClick={handleExportAll}>
+                  Export All Plans (Ctrl+E)
+                </button>
+              )}
+            </div>
           )}
         </div>
-        <div className="header__row">
-          {providerButtons.map((provider) => (
-            <button
-              key={provider.id}
-              className="button button--primary"
-              type="button"
-              onClick={() => handleOpenProvider(provider.id)}
-            >
-              Open in {provider.label}
-            </button>
-          ))}
-          <button className="button" type="button" onClick={handleSaveHistory}>
-            Save snapshot (Ctrl+S)
-          </button>
-          <button className="button button--ghost" type="button" onClick={handleReset}>
-            Clear draft
-          </button>
-        </div>
-      </header>
 
-      <main className="layout">
-        <section className="panel">
-          <h2 className="panel__title">Task Intake</h2>
-          <div className="field">
-            <label htmlFor="task">Primary task</label>
-            <textarea
-              id="task"
-              value={draft.task}
-              onChange={updateField("task")}
-              placeholder="Describe the core objective."
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="context">Background & context</label>
-            <textarea
-              id="context"
-              value={draft.context}
-              onChange={updateField("context")}
-              placeholder="Share relevant background, stakeholders, or constraints."
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="constraints">Constraints & must-haves</label>
-            <textarea
-              id="constraints"
-              value={draft.constraints}
-              onChange={updateField("constraints")}
-              placeholder="Budget, deadlines, technical constraints, etc."
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="successCriteria">Success criteria</label>
-            <textarea
-              id="successCriteria"
-              value={draft.successCriteria}
-              onChange={updateField("successCriteria")}
-              placeholder="How will you know the plan is successful?"
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="timeline">Timeline considerations</label>
-            <textarea
-              id="timeline"
-              value={draft.timeline}
-              onChange={updateField("timeline")}
-              placeholder="Key milestones or timing expectations."
-            />
-          </div>
-          <div className="field">
-            <label htmlFor="resources">Available resources</label>
-            <textarea
-              id="resources"
-              value={draft.resources}
-              onChange={updateField("resources")}
-              placeholder="Teams, tools, budgets, data sources, etc."
-            />
-          </div>
-        </section>
-
-        <section className="panel">
-          <h2 className="panel__title">Prompt & Plan Output</h2>
-          <div className="actions">
-            <button
-              className="button"
-              type="button"
-              onClick={() => handleCopy(prompt, "Prompt")}
-            >
-              Copy prompt
-            </button>
-            <button
-              className="button"
-              type="button"
-              onClick={() => handleCopy(draft.finalPlan, "Plan")}
-            >
-              Copy plan
-            </button>
-            <button className="button" type="button" onClick={handleExport}>
-              Export plan
-            </button>
-          </div>
-          <div className="prompt-preview">{prompt}</div>
-          <div className="field">
-            <label htmlFor="finalPlan">Final plan output</label>
-            <textarea
-              id="finalPlan"
-              value={draft.finalPlan}
-              onChange={updateField("finalPlan")}
-              placeholder="Paste or refine the final plan here after generating it."
-            />
-          </div>
-          <div className="meta">
-            Shortcut: Ctrl+Enter (Kimi), Ctrl+Shift+Enter (Z.ai), Ctrl+Alt+Enter (Comet)
-          </div>
-        </section>
-
-        <section className="panel">
-          <h2 className="panel__title">Prompt Roles & History</h2>
-          <div className="meta">
-            Multi-agent roles: {AGENT_ROLES.map((role) => role.name).join(", ")}
-          </div>
-          <div className="history-list">
-            {history.length === 0 && (
-              <div className="meta">No saved snapshots yet.</div>
-            )}
-            {history.map((entry) => (
-              <div key={entry.id} className="history-item">
-                <div>
-                  <strong>{entry.label}</strong>
-                  <div className="meta">
-                    {new Date(entry.createdAt).toLocaleString()}
+        <div className="right-panel">
+          <div className="history-section">
+            <h2 className="section-title">Task History</h2>
+            <div className="history-list">
+              {history.length === 0 ? (
+                <p style={{ color: '#666', fontStyle: 'italic' }}>No task history yet.</p>
+              ) : (
+                history.map((task) => (
+                  <div
+                    key={task.id}
+                    className="history-item"
+                    onClick={() => handleLoadFromHistory(task)}
+                  >
+                    <div className="history-item-title">{task.description.slice(0, 100)}</div>
+                    <div className="history-item-time">
+                      {new Date(task.timestamp).toLocaleString()}
+                    </div>
                   </div>
-                </div>
-                <div className="history-item__actions">
-                  <button
-                    className="button"
-                    type="button"
-                    onClick={() => handleLoadHistory(entry)}
-                  >
-                    Load
-                  </button>
-                  <button
-                    className="button button--danger"
-                    type="button"
-                    onClick={() => handleDeleteHistory(entry.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+                ))
+              )}
+            </div>
           </div>
-        </section>
-      </main>
 
-      {toast && (
-        <div className="toast" role="status">
-          {toast.message}
+          {currentTask && (
+            <div>
+              <h2 className="section-title">Quick Actions</h2>
+              <div className="button-group">
+                {AGENTS.map((agent) => (
+                  <button
+                    key={agent.name}
+                    className="button"
+                    onClick={() => {
+                      if (plans.length > 0) {
+                        handleOpenAgent(agent.name, plans[0]);
+                      } else {
+                        showToast('Add a plan first', 'error');
+                      }
+                    }}
+                    disabled={isLoading || plans.length === 0}
+                  >
+                    Open {agent.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
+
+      <div className="toast-container">
+        {toasts.map((toast) => (
+          <div key={toast.id} className={`toast ${toast.type}`}>
+            <div className="toast-message">{toast.message}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
-};
+}
 
 export default App;
