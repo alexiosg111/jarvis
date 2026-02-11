@@ -1,6 +1,6 @@
 {
   "name": "jarvis-hub",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Multi-agent planning flow with Electron orchestrator",
   "main": "dist/main/main.js",
   "author": "jarvis-hub",
