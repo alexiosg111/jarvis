@@ -1,185 +1,95 @@
-# 🚀 Jarvis Hub - Setup Guide
+# 🚀 Jarvis Hub - Installationsanleitung
 
-**Willkommen!** Diese Anleitung hilft Ihnen, Jarvis Hub schnell und einfach zu installieren.
+**Willkommen!** Jarvis Hub installieren in 3 Schritten.
 
 ---
 
-## 📦 Herunterladen & Installieren
+## 📦 Schritt 1: Herunterladen
 
-Jarvis Hub ist eine Desktop-Anwendung für Windows und macOS. Wählen Sie Ihre Plattform:
+Klicke auf diesen Link:
+```
+https://github.com/alexiosg111/jarvis/releases/latest
+```
 
-### 🍎 macOS Installation
+### Dateien:
+- **macOS:** `Jarvis Hub-2.1.0.dmg`
+- **Windows:** `Jarvis Hub-2.1.0-win-x64.exe`
 
-1. **Download:**
-   - Gehe zu: https://github.com/alexiosg111/jarvis/releases
-   - Suche nach dem neuesten Release (z.B. `v0.2.0`)
-   - Lade `Jarvis Hub-0.2.0.dmg` herunter
+---
 
-2. **Installieren:**
-   - Öffne die heruntergeladene `.dmg` Datei
-   - Ziehe "Jarvis Hub" in den "Applications" Ordner
-   - Fertig! Die App ist nun installiert
+## 🍎 macOS Installation
 
-3. **Starten:**
-   - Öffne Spotlight: `⌘ + Leertaste`
+1. **Herunterladen**
+   - Klicke auf `Jarvis Hub-2.1.0.dmg`
+
+2. **Installieren**
+   - Öffne die heruntergeladene .dmg-Datei
+   - Ziehe "Jarvis Hub" in den Programme-Ordner
+
+3. **Starten**
+   - Drücke `⌘ + Leertaste`
    - Suche nach "Jarvis Hub"
-   - Drücke `Enter`
+   - Drücke Enter
 
-### 🪟 Windows Installation
+---
 
-1. **Download:**
-   - Gehe zu: https://github.com/alexiosg111/jarvis/releases
-   - Suche nach dem neuesten Release (z.B. `v0.2.0`)
-   - Lade `Jarvis Hub-0.2.0-win-x64.exe` herunter
+## 🪟 Windows Installation
 
-2. **Installieren:**
-   - Doppelklicke auf die heruntergeladene `.exe` Datei
-   - Folge dem Installations-Assistenten
-   - Wähle den Installationsordner (Standard empfohlen)
-   - Klicke auf "Installieren"
-   - Fertig!
+1. **Herunterladen**
+   - Klicke auf `Jarvis Hub-2.1.0-win-x64.exe`
 
-3. **Starten:**
+2. **Installieren**
+   - Doppelklick auf die .exe-Datei
+   - Klicke auf "Install"
+
+3. **Starten**
    - Öffne das Startmenü
    - Suche nach "Jarvis Hub"
-   - Klicke darauf zum Starten
+   - Klicke zum Öffnen
 
 ---
 
-## 🎯 Erste Schritte
+## ✅ Fertig!
 
-### Nach dem Start
-
-1. **Begrüßungsbildschirm**
-   - Die App öffnet sich und zeigt den Hauptbildschirm
-   - Sie können sofort mit der Arbeit beginnen
-
-2. **Features entdecken:**
-   - **Multi-Agent Planning:** Erstellen und verwalten Sie Planning-Prompts
-   - **Autosave:** Ihre Arbeit wird automatisch gespeichert
-   - **History:** Alle Änderungen werden protokolliert
-   - **Exportieren:** Prompts und Pläne exportieren
-
-### Tastenkürzel
-
-| Aktion | Windows | macOS |
-|--------|---------|-------|
-| Neue Datei | `Ctrl + N` | `⌘ + N` |
-| Speichern | `Ctrl + S` | `⌘ + S` |
-| Exportieren | `Ctrl + E` | `⌘ + E` |
-| History | `Ctrl + H` | `⌘ + H` |
+Jarvis Hub ist jetzt installiert und bereit zur Nutzung!
 
 ---
 
-## 🔄 Updates
+## 🆘 Brauchen Sie Hilfe?
 
-### macOS
-- Jarvis Hub prüft automatisch nach Updates
-- Sie werden benachrichtigt, wenn ein Update verfügbar ist
-- Klicken Sie auf "Update" zum Installieren
+**Schnell-Hilfe:**
+- **[INSTALL.md](INSTALL.md)** - Schnell-Installationsanleitung (Englisch)
+- **[release/README.md](release/README.md)** - Download-Links
 
-### Windows
-- Jarvis Hub prüft automatisch nach Updates
-- Sie werden benachrichtigt, wenn ein Update verfügbar ist
-- Folgen Sie den Anweisungen zum Installieren
+**Support:**
+- **[GitHub Issues](https://github.com/alexiosg111/jarvis/issues)** - Fragen & Probleme
 
 ---
 
-## ❓ Häufig gestellte Fragen
+## ❓ Häufige Fragen
 
-### **Q: Wo werden meine Daten gespeichert?**
+### Q: Wo finde ich die Installationsdateien?
+**A:** Alle Downloads sind hier: https://github.com/alexiosg111/jarvis/releases/latest
 
-**macOS:**
-```
-~/Library/Application Support/jarvis-hub/
-```
+### Q: Brauche ich technische Kenntnisse?
+**A:** Nein! Die Installation ist einfach und benötigt keine technischen Kenntnisse.
 
-**Windows:**
-```
-%APPDATA%/jarvis-hub/
-```
+### Q: Ist es kostenlos?
+**A:** Ja, Jarvis Hub ist kostenlos zu nutzen.
 
-### **Q: Kann ich meine Daten sichern?**
-
-Ja! Kopieren Sie einfach den Ordner, in dem Jarvis Hub die Daten speichert (siehe oben).
-
-### **Q: Funktioniert Jarvis Hub offline?**
-
-Ja! Jarvis Hub funktioniert vollständig offline. Ihre Daten werden lokal auf Ihrem Computer gespeichert.
-
-### **Q: Unterstützt Jarvis Hub andere Sprachen?**
-
-Aktuell ist Jarvis Hub auf Englisch und Deutsch verfügbar.
-
-### **Q: Wie kann ich Jarvis Hub deinstallieren?**
-
-**macOS:**
-1. Öffne Finder → Applications
-2. Ziehe "Jarvis Hub" in den Papierkorb
-3. Leere den Papierkorb
-
-**Windows:**
-1. Öffne "Einstellungen" → "Apps"
-2. Suche nach "Jarvis Hub"
-3. Klicke auf "Deinstallieren"
+### Q: Welche Versionen werden unterstützt?
+**A:**
+- macOS: macOS 10.15 oder neuer
+- Windows: Windows 10 oder neuer
 
 ---
 
-## 🆘 Hilfe & Support
+## 📚 Weitere Dokumentation
 
-### Probleme bei der Installation?
-
-1. **Download-Fehler:**
-   - Lösche die heruntergeladene Datei
-   - Versuche erneut herunterzuladen
-   - Verwende einen anderen Browser
-
-2. **Installationsfehler:**
-   - Stelle sicher, dass du Administrator-Rechte hast
-   - Deaktiviere Antiviren-Software temporär
-   - Kontaktiere den Support
-
-3. **Startfehler:**
-   - Stelle sicher, dass deine Systemanforderungen erfüllt sind
-   - Installiere die neuesten Updates für dein Betriebssystem
-   - Überprüfe die Fehlerprotokolle in den App-Einstellungen
-
-### Systemanforderungen
-
-**macOS:**
-- macOS 10.13 oder höher
-- 4 GB RAM (empfohlen: 8 GB)
-- 200 MB freier Speicherplatz
-
-**Windows:**
-- Windows 10 oder höher
-- 4 GB RAM (empfohlen: 8 GB)
-- 200 MB freier Speicherplatz
-
-### Feedback geben
-
-Wir freuen uns über Ihr Feedback!
-
-- 🐛 **Bugs melden:** https://github.com/alexiosg111/jarvis/issues
-- 💡 **Feature-Anfragen:** https://github.com/alexiosg111/jarvis/issues
-- 💬 **Diskussionen:** https://github.com/alexiosg111/jarvis/discussions
+- **[README.md](README.md)** - Übersicht und Features
+- **[INSTALL.md](INSTALL.md)** - Quick Start Guide
+- **[release/README.md](release/README.md)** - Release-Informationen
 
 ---
 
-## 📚 Weitere Ressourcen
-
-- **GitHub Repository:** https://github.com/alexiosg111/jarvis
-- **Alle Releases:** https://github.com/alexiosg111/jarvis/releases
-- **Dokumentation:** https://github.com/alexiosg111/jarvis/wiki (coming soon)
-- **Lizenz:** Siehe LICENSE Datei im Repository
-
----
-
-## 🎉 Viel Spaß mit Jarvis Hub!
-
-Vielen Dank, dass Sie Jarvis Hub verwenden! Bei Fragen oder Problemen zögern Sie nicht, uns zu kontaktieren.
-
----
-
-**Version:** 0.2.0
-**Letzte Aktualisierung:** Februar 2026
+**Version:** 2.1.0 | **Aktualisiert:** Februar 2026

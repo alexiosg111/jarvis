@@ -1,55 +1,57 @@
-# ⚡ Quick Install - Jarvis Hub
+# ⚡ Install Jarvis Hub
 
-**Install Jarvis Hub in under 2 minutes!**
+**Quick installation in 2 minutes**
 
 ---
 
 ## 🍎 macOS
 
-1. **Download**
-   ```
+1. **Click this link:**
    https://github.com/alexiosg111/jarvis/releases/latest
-   ```
-   Click on `Jarvis Hub-0.2.0.dmg`
 
-2. **Install**
-   - Open the downloaded file
+2. **Download:** `Jarvis Hub-2.1.0.dmg`
+
+3. **Install:**
+   - Open the downloaded .dmg file
    - Drag "Jarvis Hub" to Applications folder
 
-3. **Launch**
-   - Press `⌘ + Space`, search "Jarvis Hub", press Enter
+4. **Open:**
+   - Press `⌘ + Space`
+   - Type "Jarvis Hub"
+   - Press Enter
 
 ---
 
 ## 🪟 Windows
 
-1. **Download**
-   ```
+1. **Click this link:**
    https://github.com/alexiosg111/jarvis/releases/latest
-   ```
-   Click on `Jarvis Hub-0.2.0-win-x64.exe`
 
-2. **Install**
-   - Double-click the downloaded file
-   - Click "Install" in the wizard
+2. **Download:** `Jarvis Hub-2.1.0-win-x64.exe`
 
-3. **Launch**
-   - Open Start menu, search "Jarvis Hub", click it
+3. **Install:**
+   - Double-click the .exe file
+   - Click "Install"
 
----
-
-## 🎯 Done!
-
-You're ready to start using Jarvis Hub! 🎉
+4. **Open:**
+   - Open Start menu
+   - Search "Jarvis Hub"
+   - Click to open
 
 ---
 
-## 📚 Need More Help?
+## ✅ Done!
 
-- **Detailed Guide:** See [SETUP.md](SETUP.md)
-- **All Features:** See [README.md](README.md)
-- **Support:** [GitHub Issues](https://github.com/alexiosg111/jarvis/issues)
+Jarvis Hub is now installed and ready to use!
 
 ---
 
-**Version:** 0.2.0 | **Updated:** February 2026
+## 📚 Need Help?
+
+- **🇩🇪 [SETUP.md](SETUP.md)** - Deutsche Anleitung (German guide)
+- **[release/README.md](release/README.md)** - About installers
+- **[GitHub Issues](https://github.com/alexiosg111/jarvis/issues)** - Support
+
+---
+
+**Version:** 2.1.0

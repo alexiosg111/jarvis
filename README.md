@@ -1,41 +1,51 @@
 # 🚀 Jarvis Hub
 
-**Jarvis Hub** is a modern desktop application for coordinating multi-agent planning prompts and sending them to Kimi, Z.ai, or Comet. The app keeps a running draft, autosaves to disk, and tracks planning history snapshots.
+**Jarvis Hub** is a modern desktop application for multi-agent planning and AI orchestration.
 
 ---
 
-## 📦 Quick Install
+## 📥 DOWNLOAD & INSTALL
 
-**For Users - Get Started in 3 Steps:**
+### macOS
+```
+Download: https://github.com/alexiosg111/jarvis/releases/latest
+File: Jarvis Hub-2.1.0.dmg
+```
+1. Click the link above
+2. Download `Jarvis Hub-2.1.0.dmg`
+3. Open the file and drag to Applications
 
-1. 📥 [Download the latest release](https://github.com/alexiosg111/jarvis/releases/latest)
-2. 📲 Install the `.dmg` (macOS) or `.exe` (Windows) file
-3. 🚀 Launch Jarvis Hub and start planning!
+### Windows
+```
+Download: https://github.com/alexiosg111/jarvis/releases/latest
+File: Jarvis Hub-2.1.0-win-x64.exe
+```
+1. Click the link above
+2. Download `Jarvis Hub-2.1.0-win-x64.exe`
+3. Run the installer
 
-👉 **Need detailed installation instructions?** Check out [**SETUP.md**](SETUP.md) for step-by-step guides.
+---
+
+## 📄 Setup Guides
+
+- **[🇩🇪 SETUP.md](SETUP.md)** - Deutsche Installationsanleitung (German)
+- **[INSTALL.md](INSTALL.md)** - Quick install in 2 minutes
+- **[release/README.md](release/README.md)** - About release artifacts
 
 ---
 
 ## ✨ Features
 
-- **Multi-Agent Planning:** Create and coordinate complex planning workflows
-- **Cross-Platform:** Works on macOS and Windows
-- **Autosave:** Your work is automatically saved - never lose your progress
-- **History Snapshots:** Track all changes with version history
-- **Export Tools:** Copy and export prompts and final plans
-- **Keyboard Shortcuts:** Efficient workflow with hotkeys
-- **Responsive Design:** Clean and intuitive interface
+- 🤖 Multi-agent AI planning and orchestration
+- 💻 Cross-platform: macOS & Windows
+- 🎨 Modern and intuitive user interface
+- ⚡ Fast and responsive
 
 ---
 
-## 💻 For Developers
+## 🛠️ For Developers
 
-### Prerequisites
-
-- Node.js (v18 or higher)
-- npm or yarn
-
-### Development Setup
+### Setup Development Environment
 
 ```bash
 # Install dependencies
@@ -43,77 +53,46 @@ npm install
 
 # Start development server
 npm run dev
-```
 
-This starts:
-- Vite renderer on port 5173
-- Electron main process
-- Hot reload enabled
-
-### Building for Production
-
-```bash
-# Build the app
+# Build for production
 npm run build
 
-# Create installers
-npm run dist:mac    # macOS DMG
-npm run dist:win    # Windows EXE
+# Build installers
+npm run dist:mac    # macOS
+npm run dist:win    # Windows
 ```
 
-The `electron-builder.yml` configuration drives packaging. Replace the placeholder icons in `resources/` with your branded `.icns`, `.ico`, and `.png` files.
+### Project Structure
 
----
-
-## 📖 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [**SETUP.md**](SETUP.md) | 🔥 **START HERE** - User installation guide for macOS & Windows |
-| [FIX_APPLIED.md](FIX_APPLIED.md) | Release fixes and bug reports |
-| [RELEASE_STATUS_REPORT.md](RELEASE_STATUS_REPORT.md) | Release process documentation |
-
----
-
-## 🔄 Release Automation
-
-The GitHub Actions workflow automatically builds and publishes releases:
-
-```bash
-# Tag a release (triggers automated build & release)
-git tag v0.1.0
-git push origin v0.1.0
+```
+jarvis/
+├── main/          # Electron main process
+├── renderer/      # React UI
+├── dist/          # Build output
+└── release/       # Installers (built locally)
 ```
 
-The workflow packages macOS and Windows artifacts and publishes a GitHub release.
+---
+
+## 📦 Download Links
+
+**Latest Release:** https://github.com/alexiosg111/jarvis/releases/latest
+
+**All Releases:** https://github.com/alexiosg111/jarvis/releases
 
 ---
 
-## 🌟 Latest Release
+## 🐛 Support
 
-**Version:** 0.2.0
-**Release Date:** February 2026
-
-### Download Links
-- 🍎 [macOS DMG](https://github.com/alexiosg111/jarvis/releases/tag/v0.2.0)
-- 🪟 [Windows EXE](https://github.com/alexiosg111/jarvis/releases/tag/v0.2.0)
-
-See [Releases](https://github.com/alexiosg111/jarvis/releases) for all versions.
-
----
-
-## 🆘 Support
-
-- 🐛 **Report Issues:** [GitHub Issues](https://github.com/alexiosg111/jarvis/issues)
-- 💡 **Feature Requests:** [GitHub Issues](https://github.com/alexiosg111/jarvis/issues)
-- 💬 **Discussions:** [GitHub Discussions](https://github.com/alexiosg111/jarvis/discussions)
+- **Issues:** https://github.com/alexiosg111/jarvis/issues
+- **Documentation:** See [SETUP.md](SETUP.md)
 
 ---
 
 ## 📄 License
 
-[Specify your license here]
+[Your License Here]
 
 ---
 
-**Made with ❤️ using Electron, React, and TypeScript**
+**Version:** 2.1.0 | **Release Date:** February 2026

@@ -1,104 +1,49 @@
-# 📦 Jarvis Hub - Release Artifacts
-
-This folder contains the built release artifacts (installers) for Jarvis Hub.
+# 📦 Download Jarvis Hub
 
 ---
 
-## 📍 Where to Download Installers
+## 🔗 Direct Download Links
 
-The actual installer files are **hosted on GitHub Releases**, not in this repository.
-
-### 🔗 Download Links
-
-**Latest Release:**
-- 🌐 https://github.com/alexiosg111/jarvis/releases/latest
-
-**All Releases:**
-- 🌐 https://github.com/alexiosg111/jarvis/releases
-
----
-
-## 📥 Available Installers
-
-### macOS
-- **File:** `Jarvis Hub-0.2.0.dmg`
-- **Size:** ~80-150 MB
-- **Description:** DMG disk image for macOS installation
-
-### Windows
-- **File:** `Jarvis Hub-0.2.0-win-x64.exe`
-- **Size:** ~100-180 MB
-- **Description:** NSIS installer for Windows 64-bit
-
----
-
-## 🔄 How Installers Are Created
-
-The installers are automatically built by GitHub Actions when a release is tagged:
-
-1. Developer creates a git tag (e.g., `v0.2.0`)
-2. GitHub Actions workflow is triggered
-3. App is built for macOS and Windows
-4. Installers are uploaded to GitHub Releases
-
----
-
-## 🛠️ For Developers
-
-### Build Locally
-
-If you want to build installers locally:
-
-```bash
-# Install dependencies
-npm install
-
-# Build the app
-npm run build
-
-# Create macOS installer
-npm run dist:mac
-
-# Create Windows installer
-npm run dist:win
+### 🍎 macOS
 ```
+https://github.com/alexiosg111/jarvis/releases/latest
+```
+Download: **Jarvis Hub-2.1.0.dmg** (~80-150 MB)
 
-The installers will be placed in this `release/` folder.
+### 🪟 Windows
+```
+https://github.com/alexiosg111/jarvis/releases/latest
+```
+Download: **Jarvis Hub-2.1.0-win-x64.exe** (~100-180 MB)
 
 ---
 
-## 📖 Installation Guide
+## 📖 Installation
 
-For detailed installation instructions, see:
-- 📄 [SETUP.md](../SETUP.md) - Complete user guide for macOS & Windows
-- 📄 [README.md](../README.md) - Project overview and quick install
+**macOS:**
+1. Download the .dmg file
+2. Open it and drag Jarvis Hub to Applications
+3. Open from Applications folder
 
----
-
-## ✅ What You'll Find Here After Building
-
-When you run `npm run dist:mac` or `npm run dist:win`, the following files are created:
-
-### macOS Output
-```
-release/
-├── Jarvis Hub-0.2.0.dmg              # DMG installer (download for users)
-├── Jarvis Hub-0.2.0-mac.zip          # Update package (for auto-updates)
-├── mac/                              # Build artifacts
-│   └── Jarvis Hub.app/
-└── ...
-```
-
-### Windows Output
-```
-release/
-├── Jarvis Hub-0.2.0-win-x64.exe      # EXE installer (download for users)
-├── Jarvis Hub-0.2.0-win-x64.exe.blockmap  # Update package (for auto-updates)
-├── win-unpacked/                     # Build artifacts
-│   └── Jarvis Hub.exe
-└── ...
-```
+**Windows:**
+1. Download the .exe file
+2. Double-click and click "Install"
+3. Open from Start menu
 
 ---
 
-**Note:** This folder is typically empty in the repository. The actual installer files are only created during the build process and uploaded to GitHub Releases.
+## 🌐 All Releases
+
+- **Latest:** https://github.com/alexiosg111/jarvis/releases/latest
+- **All:** https://github.com/alexiosg111/jarvis/releases
+
+---
+
+## 👉 For detailed installation help
+
+- **[INSTALL.md](../INSTALL.md)** - Quick install guide
+- **[SETUP.md](../SETUP.md)** - Complete setup guide (German)
+
+---
+
+**Version:** 2.1.0
