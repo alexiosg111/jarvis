@@ -7,7 +7,7 @@ Download the latest release of Jarvis Hub from the GitHub Releases page.
 Download the Windows installer (`.exe`):
 
 ```
-https://github.com/alexiosg111/jarvis/releases/latest/download/Jarvis%20Hub-0.2.4-win-x64.exe
+https://github.com/alexiosg111/jarvis/releases/latest/download/Jarvis%20Hub-0.2.5-win-x64.exe
 ```
 
 After downloading, double-click the `.exe` file to install Jarvis Hub.
@@ -17,14 +17,14 @@ After downloading, double-click the `.exe` file to install Jarvis Hub.
 Download the macOS Intel disk image (`.dmg`):
 
 ```
-https://github.com/alexiosg111/jarvis/releases/latest/download/Jarvis%20Hub-0.2.4-mac-intel.dmg
+https://github.com/alexiosg111/jarvis/releases/latest/download/Jarvis%20Hub-0.2.5-mac-intel.dmg
 ```
 
 After downloading, double-click the `.dmg` file to mount it, then drag Jarvis Hub to your Applications folder.
 
 ## Finding the Latest Version
 
-To find the latest version number, visit the [releases page](https://github.com/alexiosg111/jarvis/releases) and look for the most recent tag (e.g., `v0.2.4`).
+To find the latest version number, visit the [releases page](https://github.com/alexiosg111/jarvis/releases) and look for the most recent tag (e.g., `v0.2.5`).
 
 ## System Requirements
 
