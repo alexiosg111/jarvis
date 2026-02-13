@@ -11,6 +11,7 @@ mac:
     - "dmg"
   icon: "resources/icon.icns"
   category: "public.app-category.productivity"
+  artifactName: "${productName}-${version}-mac-intel.${ext}"
 win:
   target:
     - "nsis"
