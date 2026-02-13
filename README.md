@@ -10,6 +10,10 @@ Jarvis Hub is an Electron + React + TypeScript workspace for coordinating multi-
 - Copy and export tools for prompts and final plans
 - Keyboard shortcuts and responsive layout
 
+## Installation
+
+See [INSTALL.md](INSTALL.md) for download links and installation instructions for Windows and macOS (Intel).
+
 ## Development
 
 ```bash
