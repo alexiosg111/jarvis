@@ -21,12 +21,12 @@ The actual installer files are **hosted on GitHub Releases**, not in this reposi
 ## 📥 Available Installers
 
 ### macOS
-- **File:** `Jarvis Hub-0.1.2.dmg`
+- **File:** `Jarvis Hub-0.2.0.dmg`
 - **Size:** ~80-150 MB
 - **Description:** DMG disk image for macOS installation
 
 ### Windows
-- **File:** `Jarvis Hub-0.1.2-win-x64.exe`
+- **File:** `Jarvis Hub-0.2.0-win-x64.exe`
 - **Size:** ~100-180 MB
 - **Description:** NSIS installer for Windows 64-bit
 
@@ -36,7 +36,7 @@ The actual installer files are **hosted on GitHub Releases**, not in this reposi
 
 The installers are automatically built by GitHub Actions when a release is tagged:
 
-1. Developer creates a git tag (e.g., `v0.1.2`)
+1. Developer creates a git tag (e.g., `v0.2.0`)
 2. GitHub Actions workflow is triggered
 3. App is built for macOS and Windows
 4. Installers are uploaded to GitHub Releases
@@ -82,8 +82,8 @@ When you run `npm run dist:mac` or `npm run dist:win`, the following files are c
 ### macOS Output
 ```
 release/
-├── Jarvis Hub-0.1.2.dmg              # DMG installer (download for users)
-├── Jarvis Hub-0.1.2-mac.zip          # Update package (for auto-updates)
+├── Jarvis Hub-0.2.0.dmg              # DMG installer (download for users)
+├── Jarvis Hub-0.2.0-mac.zip          # Update package (for auto-updates)
 ├── mac/                              # Build artifacts
 │   └── Jarvis Hub.app/
 └── ...
@@ -92,8 +92,8 @@ release/
 ### Windows Output
 ```
 release/
-├── Jarvis Hub-0.1.2-win-x64.exe      # EXE installer (download for users)
-├── Jarvis Hub-0.1.2-win-x64.exe.blockmap  # Update package (for auto-updates)
+├── Jarvis Hub-0.2.0-win-x64.exe      # EXE installer (download for users)
+├── Jarvis Hub-0.2.0-win-x64.exe.blockmap  # Update package (for auto-updates)
 ├── win-unpacked/                     # Build artifacts
 │   └── Jarvis Hub.exe
 └── ...

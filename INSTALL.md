@@ -10,7 +10,7 @@
    ```
    https://github.com/alexiosg111/jarvis/releases/latest
    ```
-   Click on `Jarvis Hub-0.1.2.dmg`
+   Click on `Jarvis Hub-0.2.0.dmg`
 
 2. **Install**
    - Open the downloaded file
@@ -27,7 +27,7 @@
    ```
    https://github.com/alexiosg111/jarvis/releases/latest
    ```
-   Click on `Jarvis Hub-0.1.2-win-x64.exe`
+   Click on `Jarvis Hub-0.2.0-win-x64.exe`
 
 2. **Install**
    - Double-click the downloaded file
@@ -52,4 +52,4 @@ You're ready to start using Jarvis Hub! 🎉
 
 ---
 
-**Version:** 0.1.2 | **Updated:** February 2026
+**Version:** 0.2.0 | **Updated:** February 2026

@@ -91,12 +91,12 @@ The workflow packages macOS and Windows artifacts and publishes a GitHub release
 
 ## 🌟 Latest Release
 
-**Version:** 0.1.2
+**Version:** 0.2.0
 **Release Date:** February 2026
 
 ### Download Links
-- 🍎 [macOS DMG](https://github.com/alexiosg111/jarvis/releases/tag/v0.1.2)
-- 🪟 [Windows EXE](https://github.com/alexiosg111/jarvis/releases/tag/v0.1.2)
+- 🍎 [macOS DMG](https://github.com/alexiosg111/jarvis/releases/tag/v0.2.0)
+- 🪟 [Windows EXE](https://github.com/alexiosg111/jarvis/releases/tag/v0.2.0)
 
 See [Releases](https://github.com/alexiosg111/jarvis/releases) for all versions.
 

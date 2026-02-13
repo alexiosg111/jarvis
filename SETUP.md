@@ -12,8 +12,8 @@ Jarvis Hub ist eine Desktop-Anwendung für Windows und macOS. Wählen Sie Ihre P
 
 1. **Download:**
    - Gehe zu: https://github.com/alexiosg111/jarvis/releases
-   - Suche nach dem neuesten Release (z.B. `v0.1.2`)
-   - Lade `Jarvis Hub-0.1.2.dmg` herunter
+   - Suche nach dem neuesten Release (z.B. `v0.2.0`)
+   - Lade `Jarvis Hub-0.2.0.dmg` herunter
 
 2. **Installieren:**
    - Öffne die heruntergeladene `.dmg` Datei
@@ -29,8 +29,8 @@ Jarvis Hub ist eine Desktop-Anwendung für Windows und macOS. Wählen Sie Ihre P
 
 1. **Download:**
    - Gehe zu: https://github.com/alexiosg111/jarvis/releases
-   - Suche nach dem neuesten Release (z.B. `v0.1.2`)
-   - Lade `Jarvis Hub-0.1.2-win-x64.exe` herunter
+   - Suche nach dem neuesten Release (z.B. `v0.2.0`)
+   - Lade `Jarvis Hub-0.2.0-win-x64.exe` herunter
 
 2. **Installieren:**
    - Doppelklicke auf die heruntergeladene `.exe` Datei
@@ -181,5 +181,5 @@ Vielen Dank, dass Sie Jarvis Hub verwenden! Bei Fragen oder Problemen zögern Si
 
 ---
 
-**Version:** 0.1.2
+**Version:** 0.2.0
 **Letzte Aktualisierung:** Februar 2026
