@@ -1,6 +1,8 @@
 node_modules/
 dist/
-release/
+# Ignore release folder contents but keep README
+release/*
+!release/README.md
 .DS_Store
 .env
 .env.*
