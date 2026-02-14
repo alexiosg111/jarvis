@@ -7,7 +7,7 @@ Download the latest release of Jarvis Hub from the GitHub Releases page.
 Download the Windows installer (`.exe`):
 
 ```
-https://github.com/alexiosg111/jarvis/releases/latest/download/Jarvis%20Hub-0.2.6-win-x64.exe
+https://github.com/alexiosg111/jarvis/releases/latest/download/Jarvis%20Hub-0.2.7-win-x64.exe
 ```
 
 After downloading, double-click the `.exe` file to install Jarvis Hub.
@@ -18,7 +18,7 @@ macOS builds are currently not available. Windows only for now.
 
 ## Finding the Latest Version
 
-To find the latest version number, visit the [releases page](https://github.com/alexiosg111/jarvis/releases) and look for the most recent tag (e.g., `v0.2.6`).
+To find the latest version number, visit the [releases page](https://github.com/alexiosg111/jarvis/releases) and look for the most recent tag (e.g., `v0.2.7`).
 
 ## System Requirements
 
