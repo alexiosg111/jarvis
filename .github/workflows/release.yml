@@ -14,8 +14,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-12
-            target: mac
           - os: windows-latest
             target: win
     steps:
