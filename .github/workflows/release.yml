@@ -5,14 +5,15 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - os: macos-12
-            target: mac
           - os: windows-latest
             target: win
     steps:

@@ -1,6 +1,6 @@
 {
   "name": "jarvis-hub",
-  "version": "0.2.3",
+  "version": "0.2.7",
   "description": "Jarvis Hub Electron app for multi-agent planning.",
   "main": "dist/main/main.js",
   "private": true,

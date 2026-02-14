@@ -2,7 +2,6 @@ appId: "com.jarvis.hub"
 productName: "Jarvis Hub"
 directories:
   output: "release"
-  buildResources: "resources"
 files:
   - "dist/**"
   - "package.json"
