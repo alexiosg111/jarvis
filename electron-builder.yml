@@ -13,11 +13,11 @@ mac:
   target:
     - "dmg"
   category: "public.app-category.productivity"
-  artifactName: "setup.${ext}"
+  artifactName: "jarvis-hub-installer.${ext}"
 win:
   target:
     - "nsis"
-  artifactName: "setup.${ext}"
+  artifactName: "jarvis-hub-installer.${ext}"
 linux:
   target:
     - "AppImage"
