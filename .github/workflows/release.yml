@@ -35,6 +35,14 @@ jobs:
         run: npm run build
 
       - name: Package release
-        run: npx electron-builder --${{ matrix.target }} --x64 --publish always
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npx electron-builder --${{ matrix.target }} --x64        env:
+
+
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          release/Jarvis-Setup.exe
+          release/Jarvis-Setup.dmg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
