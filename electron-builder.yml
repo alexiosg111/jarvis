@@ -24,9 +24,9 @@ win:
   target:
     - "nsis"
   artifactName: "setup.${ext}"
-    nsis:
-        warningsAsErrors: false
-
 linux:
   target:
     - "AppImage"
+
+    nsis:
+      warningsAsErrors: false
