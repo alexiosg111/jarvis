@@ -1,20 +1,30 @@
 appId: "com.jarvis.hub"
 productName: "Jarvis Hub"
+
 directories:
   output: "release"
   buildResources: "resources"
+
 files:
   - "dist/**"
   - "package.json"
+
+publish:
+  provider: github
+  owner: alexiosg111
+  repo: jarvis
+
 mac:
   target:
     - "dmg"
   category: "public.app-category.productivity"
-  artifactName: "${productName}-${version}-mac-intel.${ext}"
+  artifactName: "setup.${ext}"
+
 win:
   target:
     - "nsis"
-  artifactName: "${productName}-${version}-${os}-${arch}.${ext}"
+  artifactName: "setup.${ext}"
+
 linux:
   target:
     - "AppImage"
