@@ -18,12 +18,11 @@ mac:
   target:
     - "dmg"
   category: "public.app-category.productivity"
-  artifactName: "setup.${ext}"
-
+  artifactName: "Jarvis-Setup.${ext}"
 win:
   target:
     - "nsis"
-  artifactName: "setup.${ext}"
+  artifactName: "Jarvis-Setup.${ext}"
 linux:
   target:
     - "AppImage"
