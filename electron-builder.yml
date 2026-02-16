@@ -27,6 +27,3 @@ win:
 linux:
   target:
     - "AppImage"
-
-nsis:
-      ingsAsErrors: false
