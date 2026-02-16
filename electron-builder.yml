@@ -9,16 +9,15 @@ files:
   - "dist/**"
   - "package.json"
 
-
 mac:
   target:
     - "dmg"
   category: "public.app-category.productivity"
-  artifactName: "Jarvis-Setup.${ext}"
+  artifactName: "setup.${ext}"
 win:
   target:
     - "nsis"
-  artifactName: "Jarvis-Setup.${ext}"
+  artifactName: "setup.${ext}"
 linux:
   target:
     - "AppImage"
