@@ -28,5 +28,5 @@ linux:
   target:
     - "AppImage"
 
-    nsis:
-      warningsAsErrors: false
+nsis:
+      ingsAsErrors: false
