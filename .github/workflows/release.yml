@@ -44,7 +44,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            release/setup.exe
-            release/setup.dmg
+            release/jarvis-hub-installer.exe
+            release/jarvis-hub-installer.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
