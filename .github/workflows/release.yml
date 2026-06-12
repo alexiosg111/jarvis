@@ -48,3 +48,4 @@ jobs:
             release/jarvis-hub-installer.dmg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+# Legacy workflow preserved in archive
