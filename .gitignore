@@ -10,3 +10,24 @@ yarn-debug.log*
 yarn-error.log*
 .idea/
 .vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+
+# Audio temp files
+temp_recording.wav
+speech.wav
+
+# OS
+.DS_Store
+Thumbs.db
